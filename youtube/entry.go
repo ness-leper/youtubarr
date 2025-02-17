@@ -3,15 +3,13 @@ package youtube
 import (
 	"context"
 	"fmt"
-	"log"
 	env "github.com/youtubarr/environment"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
+	"log"
 )
 
 func Search(query string) [10]string {
-	// query := flag.String("q", "Golang tutorial", "Search query")
-  // flag.Parse()
 	apiKey := env.YoutubeApi().Value
 
 	// Create YouTube service.
@@ -24,10 +22,10 @@ func Search(query string) [10]string {
 	// Create the search call.
 	call := service.Search.List([]string{"snippet"}).
 		Q(query).
-    Type("video").
+		Type("video").
 		MaxResults(10) // Limit to 5 results for brevity.  Adjust as needed
 
-		// Execute the search.
+  // Execute the search.
 	response, err := call.Do()
 	if err != nil {
 		log.Fatalf("Error making search API call: %v", err)
@@ -35,16 +33,16 @@ func Search(query string) [10]string {
 
 	// Print the results.
 	fmt.Println("Search Results:")
-  ids := [10]string{}
-  count := 0
+	ids := [10]string{}
+	count := 0
 	for _, item := range response.Items {
 		switch item.Id.Kind {
 		case "youtube#video":
 			fmt.Printf("Video: %s (%s)\n", item.Snippet.Title, item.Id.VideoId)
-      ids[count] = item.Id.VideoId
-      count += 1
+			ids[count] = item.Id.VideoId
+			count += 1
 		}
 	}
 
-  return ids
+	return ids
 }
