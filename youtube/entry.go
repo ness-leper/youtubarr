@@ -2,7 +2,6 @@ package youtube
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
 	env "github.com/youtubarr/environment"
@@ -10,10 +9,10 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-func Test() {
-	query := flag.String("q", "Golang tutorial", "Search query")
+func Search(query string) [10]string {
+	// query := flag.String("q", "Golang tutorial", "Search query")
+  // flag.Parse()
 	apiKey := env.YoutubeApi().Value
-	flag.Parse()
 
 	// Create YouTube service.
 	ctx := context.Background()
@@ -24,7 +23,8 @@ func Test() {
 
 	// Create the search call.
 	call := service.Search.List([]string{"snippet"}).
-		Q(*query).
+		Q(query).
+    Type("video").
 		MaxResults(10) // Limit to 5 results for brevity.  Adjust as needed
 
 		// Execute the search.
@@ -35,16 +35,16 @@ func Test() {
 
 	// Print the results.
 	fmt.Println("Search Results:")
+  ids := [10]string{}
+  count := 0
 	for _, item := range response.Items {
 		switch item.Id.Kind {
 		case "youtube#video":
 			fmt.Printf("Video: %s (%s)\n", item.Snippet.Title, item.Id.VideoId)
-		case "youtube#channel":
-			fmt.Printf("Channel: %s (%s)\n", item.Snippet.Title, item.Id.ChannelId)
-		case "youtube#playlist":
-			fmt.Printf("Playlist: %s (%s)\n", item.Snippet.Title, item.Id.PlaylistId)
+      ids[count] = item.Id.VideoId
+      count += 1
 		}
-		fmt.Println("------------------------------------")
 	}
 
+  return ids
 }

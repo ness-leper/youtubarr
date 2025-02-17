@@ -1,9 +1,15 @@
 package main
 
 import (
-  yt "github.com/youtubarr/youtube"
+	"flag"
+	"fmt"
+
+	yt "github.com/youtubarr/youtube"
 )
 
 func main(){
-  yt.Test()
+	query := flag.String("q", "Golang tutorial", "Search query")
+  flag.Parse()
+  ids := yt.Search(*query)
+  fmt.Println(ids)
 }
